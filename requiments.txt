@@ -2,3 +2,4 @@ tweepy==4.15.0
 google-genai==1.8.0
 python-dotenv==1.1.0
 pillow==11.2.0
+python-dateutil==2.9.0.post0

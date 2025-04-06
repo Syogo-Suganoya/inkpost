@@ -28,7 +28,6 @@ def query(prompt):
 def image_genrate(contents, directory):
     client = genai.Client(api_key=GEMINI_KEY)
     prompt = f"{contents}\n- スタイル: 手書きイラスト"
-    print(prompt)
 
     response = client.models.generate_content(
         model="gemini-2.0-flash-exp-image-generation", contents=prompt, config=types.GenerateContentConfig(response_modalities=["Text", "Image"])

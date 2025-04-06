@@ -13,7 +13,7 @@ def get_past_weather(location_name: str, year: int, month: int):
     """
     地点名、年、月を指定して過去の気象情報を取得する。
     """
-    station_data = text.load_json("station_data.json")
+    station_data = text.load_json("materials/station_data.json")
     station_no = station_data.get(location_name)
 
     if not station_no:

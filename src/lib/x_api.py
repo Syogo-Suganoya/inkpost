@@ -100,13 +100,7 @@ def get_user_tweets_mock():
         def __init__(self, data):
             self.data = data
 
-    with open("絵日記/mock/tweet.json", "r", encoding="utf-8") as f:
+    with open("mock/tweet.json", "r", encoding="utf-8") as f:
         data = json.load(f)
     MockTweet = namedtuple("MockTweet", ["created_at", "text"])
     return MockResponse([MockTweet(datetime.strptime(tweet["created_at"], "%Y-%m-%d %H:%M:%S"), tweet["text"]) for tweet in data])
-
-    # return MockResponse([
-    #     MockTweet(datetime(2023, 5, 1, 10, 0, 0), "おはようございます！"),
-    #     MockTweet(datetime(2023, 5, 1, 15, 30, 0), "ランチ美味しかった！今日はオムライスを食べた"),
-    #     MockTweet(datetime(2023, 5, 2, 20, 0, 0), "今日も一日頑張った！"),
-    # ])

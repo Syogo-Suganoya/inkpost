@@ -1,4 +1,3 @@
-import argparse
 import os
 from argparse import ArgumentParser
 from datetime import datetime, timedelta
@@ -41,7 +40,7 @@ class DiaryDataset:
 
         for year, month in months:
             if args.mock:
-                path = f"絵日記/mock/weather/{year}{month:02d}.json"
+                path = f"mock/weather/{year}{month:02d}.json"
                 raw = text.load_json(path)
             else:
                 raw = whether.get_past_weather(self.location_name, year, month)
@@ -54,7 +53,7 @@ def tweet_to_diary(tweet_text):
     """
     ツイートの内容を日記の文体に変換する
     """
-    prompt_template = text.read_text_file("絵日記/prompt/tweet_to_diary.txt")
+    prompt_template = text.read_text_file("prompt/tweet_to_diary.txt")
     prompt = prompt_template.replace("###TWEET_TEXT###", tweet_text)
     result = gemini_api.query(prompt)
     return result
@@ -64,7 +63,7 @@ def extract_diary_for_image(diary_text):
     """
     日記のテキストから画像生成に必要なシチュエーションや登場人物などの要素を抽出する
     """
-    prompt_template = text.read_text_file("絵日記/prompt/diary_to_situation.txt")
+    prompt_template = text.read_text_file("prompt/diary_to_situation.txt")
     prompt = prompt_template.replace("###DIARY_TEXT###", diary_text)
     result = gemini_api.query(prompt)
     return result
@@ -97,7 +96,12 @@ def parse_args():
 
 
 def main():
-    dataset = DiaryDataset()
+    try:
+        dataset = DiaryDataset()
+    except ValueError as e:
+        print("データの取得中にエラーが発生しました。")
+        print(str(e))
+        return
 
     tweets_by_date = {}
     if dataset.tweets.data:
@@ -108,7 +112,7 @@ def main():
     current_date = dataset.start_date
     while current_date <= dataset.end_date:
         date_str = current_date.strftime("%Y-%m-%d")
-        directory = os.path.join("dialy", date_str)
+        directory = os.path.join("output/dialy", date_str)
         # ディレクトリがない場合は作成
         if directory and not os.path.exists(directory):
             os.makedirs(directory, exist_ok=True)
@@ -129,8 +133,6 @@ def main():
 
 
 if __name__ == "__main__":
-    load_dotenv("絵日記/.env")
-    parser = argparse.ArgumentParser(description="トレンド分析とアイデア生成")
-    parser.add_argument("--mock", action="store_true", help="モックデータを使用する")
+    load_dotenv()
     args = parse_args()
-    # main()
+    main()
