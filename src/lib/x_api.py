@@ -75,8 +75,12 @@ def get_user_tweets(name, max_results=None, start_date=None, end_date=None):
     ユーザーの投稿を取得します。
     """
     client = client_x()
-    user = client.get_user(username=name)
     # ユーザーIDを取得
+    if name.startswith("@"):
+        name = name[1:]
+    else:
+        name = name
+    user = client.get_user(username=name)
     user_id = user.data.id
     tweet_fields = ["created_at", "text"]
     params = {"id": user_id, "tweet_fields": tweet_fields}
