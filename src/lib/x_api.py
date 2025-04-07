@@ -26,14 +26,14 @@ def get_trends(woeid):
     return [trend["name"] for trend in trends[0]["trends"]]
 
 
-def get_trends_mock(file_path, num_tweets=10):
+def get_trends_mock(file_path, num_posts=10):
     """
     モックのトレンドポストデータを読み込みます。
     """
     try:
         with open(file_path, "r", encoding="utf-8") as f:
-            tweets = json.load(f)
-        return tweets[:num_tweets]
+            posts = json.load(f)
+        return posts[:num_posts]
     except FileNotFoundError:
         print(f"ファイルが見つかりませんでした: {file_path}")
         return []
@@ -52,17 +52,17 @@ def client_x():
     )
 
 
-def post_tweet(text, tweet_id=None):
+def post_post(text, post_id=None):
     """
     X に投稿または返信します。
     """
 
     try:
         client = client_x()
-        tweet_params = {"text": text}
-        if tweet_id:
-            tweet_params["in_reply_to_tweet_id"] = tweet_id
-        response = client.create_tweet(**tweet_params)
+        post_params = {"text": text}
+        if post_id:
+            post_params["in_reply_to_post_id"] = post_id
+        response = client.create_post(**post_params)
         print(f"X に投稿/返信しました: {response}")
         return response.data["id"]  # 投稿IDを返す
     except tweepy.TweepyException as e:
@@ -70,7 +70,7 @@ def post_tweet(text, tweet_id=None):
         return None
 
 
-def get_user_tweets(name, max_results=None, start_date=None, end_date=None):
+def get_user_posts(name, max_results=None, start_date=None, end_date=None):
     """
     ユーザーの投稿を取得します。
     """
@@ -82,29 +82,29 @@ def get_user_tweets(name, max_results=None, start_date=None, end_date=None):
         name = name
     user = client.get_user(username=name)
     user_id = user.data.id
-    tweet_fields = ["created_at", "text"]
-    params = {"id": user_id, "tweet_fields": tweet_fields}
+    post_fields = ["created_at", "text"]
+    params = {"id": user_id, "post_fields": post_fields}
     if start_date:
         params["start_time"] = start_date.isoformat() + "Z"
     if end_date:
         params["end_time"] = end_date.isoformat() + "Z"
     if max_results:
         params["max_results"] = max_results
-    tweets = client.get_users_tweets(**params)
-    return tweets
+    posts = client.get_users_posts(**params)
+    return posts
 
 
-def get_user_tweets_mock():
+def get_user_posts_mock():
     """
-    get_user_tweets のモックデータ
+    get_user_posts のモックデータ
     """
-    MockTweet = namedtuple("MockTweet", ["created_at", "text"])
+    MockPost = namedtuple("MockPost", ["created_at", "text"])
 
     class MockResponse:
         def __init__(self, data):
             self.data = data
 
-    with open("mock/tweet.json", "r", encoding="utf-8") as f:
+    with open("mock/post.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-    MockTweet = namedtuple("MockTweet", ["created_at", "text"])
-    return MockResponse([MockTweet(datetime.strptime(tweet["created_at"], "%Y-%m-%d %H:%M:%S"), tweet["text"]) for tweet in data])
+    MockPost = namedtuple("MockPost", ["created_at", "text"])
+    return MockResponse([MockPost(datetime.strptime(post["created_at"], "%Y-%m-%d %H:%M:%S"), post["text"]) for post in data])

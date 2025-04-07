@@ -13,7 +13,7 @@ class DiaryDataset:
         self.location_name = None
         self.start_date = None
         self.end_date = None
-        self.tweets = []
+        self.posts = []
         self.weather_data = {}
 
         self._load_metadata()
@@ -25,13 +25,13 @@ class DiaryDataset:
             self.location_name = "東京"
             self.start_date = datetime.strptime("2023-05-01", "%Y-%m-%d")
             self.end_date = datetime.strptime("2023-05-02", "%Y-%m-%d")
-            self.tweets = x_api.get_user_tweets_mock()
+            self.posts = x_api.get_user_posts_mock()
         else:
             self.user_name = args.user_name
             self.location_name = args.location_name
             self.start_date = datetime.strptime(args.start_date, "%Y-%m-%d")
             self.end_date = datetime.strptime(args.end_date, "%Y-%m-%d")
-            self.tweets = x_api.get_user_tweets(self.user_name)
+            self.posts = x_api.get_user_posts(self.user_name)
 
         validation.validate_dates(self.start_date, self.end_date)
 
@@ -49,12 +49,12 @@ class DiaryDataset:
             self.weather_data.update(daily)
 
 
-def tweet_to_diary(tweet_text):
+def post_to_diary(post_text):
     """
     ツイートの内容を日記の文体に変換する
     """
-    prompt_template = text.read_text_file("prompt/tweet_to_diary.txt")
-    prompt = prompt_template.replace("###TWEET_TEXT###", tweet_text)
+    prompt_template = text.read_text_file("prompt/post_to_diary.txt")
+    prompt = prompt_template.replace("###POST_TEXT###", post_text)
     result = gemini_api.query(prompt)
     return result
 
@@ -103,25 +103,25 @@ def main():
         print(str(e))
         return
 
-    tweets_by_date = {}
-    if dataset.tweets.data:
-        for tweet in dataset.tweets.data:
-            tweet_date = tweet.created_at.strftime("%Y-%m-%d")
-            tweets_by_date.setdefault(tweet_date, []).append(tweet.text)
+    posts_by_date = {}
+    if dataset.posts.data:
+        for post in dataset.posts.data:
+            post_date = post.created_at.strftime("%Y-%m-%d")
+            posts_by_date.setdefault(post_date, []).append(post.text)
 
     current_date = dataset.start_date
     while current_date <= dataset.end_date:
         date_str = current_date.strftime("%Y-%m-%d")
-        directory = os.path.join("output/dialy", date_str)
+        directory = os.path.join("output2/dialy", date_str)
         # ディレクトリがない場合は作成
         if directory and not os.path.exists(directory):
             os.makedirs(directory, exist_ok=True)
 
         diary_intro = f"{date_str}: {dataset.weather_data[date_str]}\n"
-        if date_str in tweets_by_date:
+        if date_str in posts_by_date:
             # 日記文章の生成
-            posts = "\n".join(tweets_by_date[date_str])
-            diary_text = tweet_to_diary(posts)
+            posts = "\n".join(posts_by_date[date_str])
+            diary_text = post_to_diary(posts)
             # 絵の生成
             contents = extract_diary_for_image(diary_text)
             gemini_api.image_genrate(contents, directory)

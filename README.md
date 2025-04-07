@@ -4,8 +4,6 @@
 
 このツールは、X（旧Twitter）から取得したツイートと天気データを組み合わせて、日記形式のテキストを生成するプログラムです。また、生成された日記から画像生成に必要な要素を抽出し、画像生成APIを利用して関連する画像を生成します。
 
----
-
 ## 主な機能
 
 1. **ツイート取得**
@@ -53,13 +51,7 @@
 
 ## 実行方法
 
-1. モックデータを使用して実行する場合：
-
-    ```bash
-    python src/main.py --mock
-    ```
-
-2. 実際のデータを使用して実行する場合：
+1. 実際のデータを使用して実行する場合：
 
     ```bash
     python src/main.py --user_name <ユーザー名> --location_name <地名> --start_date <開始日> --end_date <終了日>
@@ -69,6 +61,12 @@
 
     ```bash
     python src/main.py --user_name "example_user" --location_name "東京" --start_date "2023-05-01" --end_date "2023-05-07"
+    ```
+
+2. モックデータを使用して実行する場合：
+
+    ```bash
+    python src/main.py --mock
     ```
 
 **注意事項:**
@@ -92,4 +90,3 @@
   気象庁の[過去の気象データ・ダウンロード](https://www.data.jma.go.jp/risk/obsdl/)が現在メンテナンス中のため、
   サードパーティの[API](https://www.cultivationdata.net/weather-web-api.html)を使用しています。このAPIも気象庁のデータを参照しています。
   メンテナンスが明け次第、直接気象庁のデータをダウンロードするように変更します。
-
