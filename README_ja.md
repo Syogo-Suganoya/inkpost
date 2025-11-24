@@ -89,6 +89,7 @@
 ## 課題と今後の展望
 
 - **天気データ取得を気象庁APIに変更**
+
   気象庁の[過去の気象データ・ダウンロード](https://www.data.jma.go.jp/risk/obsdl/)が現在メンテナンス中のため、
   サードパーティの[API](https://www.cultivationdata.net/weather-web-api.html)を使用しています。このAPIも気象庁のデータを参照しています。
   メンテナンスが明け次第、直接気象庁のデータをダウンロードするように変更します。

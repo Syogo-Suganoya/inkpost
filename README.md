@@ -89,5 +89,6 @@ This tool generates diary-style text by combining tweets retrieved from X (forme
 ## Challenges & Future Plans
 
 - **Switch Weather Data Retrieval to JMA API**
+
   Currently, the Japan Meteorological Agency's [historical weather data download](https://www.data.jma.go.jp/risk/obsdl/) is under maintenance, so a third-party [API](https://www.cultivationdata.net/weather-web-api.html) is being used, which references JMA data.
   Once maintenance is complete, the tool will be updated to download data directly from JMA.
